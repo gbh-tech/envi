@@ -38,8 +38,12 @@ func configureWerfFlags(cmd *cobra.Command) werf.WerfOptions {
 func init() {
 	RootCmd.AddCommand(WerfCommand)
 
-	WerfCommand.PersistentFlags().StringP("environment", "e", "", "Target environment")
-	WerfCommand.MarkPersistentFlagRequired("environment")
 	WerfCommand.PersistentFlags().StringP("values", "v", "", "Add custom values")
 	WerfCommand.PersistentFlags().BoolP("secrets", "s", true, "Include secret files")
+	WerfCommand.PersistentFlags().StringP("environment", "e", "", "Target environment")
+
+	// Required flags
+	if err := WerfCommand.MarkPersistentFlagRequired("environment"); err != nil {
+		log.Fatalf("Error marking 'vault' flag as required: %v", err)
+	}
 }

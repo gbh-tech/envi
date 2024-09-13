@@ -48,7 +48,13 @@ func init() {
 	RootCmd.AddCommand(OnePasswordCommand)
 
 	OnePasswordCommand.PersistentFlags().StringP("vault", "v", "", "Vault ID")
-	OnePasswordCommand.MarkPersistentFlagRequired("vault")
 	OnePasswordCommand.PersistentFlags().StringArrayP("item", "i", []string{""}, "Item ID")
-	OnePasswordCommand.MarkPersistentFlagRequired("item")
+
+	// Required flags
+	if err := OnePasswordCommand.MarkPersistentFlagRequired("vault"); err != nil {
+		log.Fatalf("Error marking 'vault' flag as required: %v", err)
+	}
+	if err := OnePasswordCommand.MarkPersistentFlagRequired("item"); err != nil {
+		log.Fatalf("Error marking 'vault' flag as required: %v", err)
+	}
 }

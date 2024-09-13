@@ -1,0 +1,5 @@
+project: envi
+configVersion: 1
+build:
+  platform:
+    - linux/amd64

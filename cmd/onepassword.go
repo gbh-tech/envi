@@ -1,26 +1,54 @@
 package cmd
 
 import (
-	"github.com/gbh-tech/envi/pkg/providers"
+	"os"
+
+	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
+
+	op "github.com/gbh-tech/envi/pkg/providers/onepassword"
 )
 
-func NewOnePasswordCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "op",
-		Short: "Generate .env file from 1Password",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			// Initialize 1Password provider
-			opProvider := providers.NewOnePasswordProvider()
-			// Use the provider to generate .env file
-			return opProvider.GenerateEnvFile()
-		},
+var OnePasswordClient op.OnePasswordClient
+
+var OnePasswordCommand = &cobra.Command{
+	Use:     "op",
+	Aliases: []string{"onepassword"},
+	Short:   "Generate .env file from 1Password",
+	Example: "envi op [flags]",
+	Run: func(cmd *cobra.Command, args []string) {
+		options := configureOnepasswordFlags(cmd)
+
+		token := os.Getenv("OP_SERVICE_ACCOUNT_TOKEN")
+		OnePasswordClient, err := op.NewClient(token)
+		if err != nil {
+			log.Fatalf("Error initializing OnePassowrd client: %v", err)
+		}
+
+		err = OnePasswordClient.GenerateEnvFile(options)
+		if err != nil {
+			log.Fatalf("Error: %v\n", err)
+		}
+	},
+}
+
+func configureOnepasswordFlags(cmd *cobra.Command) op.OnepasswordOptions {
+	vault, _ := cmd.Flags().GetString("vault")
+	item, _ := cmd.Flags().GetStringArray("item")
+	path, _ := cmd.Flags().GetStringArray("path")
+
+	return op.OnepasswordOptions{
+		Vault: vault,
+		Items: item,
+		Path:  path,
 	}
+}
 
-	// Add flags specific to 1Password command
-	cmd.Flags().StringP("vault", "v", "", "Target vault")
-	cmd.Flags().StringSliceP("item", "i", nil, "Target secret items")
-	cmd.Flags().StringSliceP("to-path", "p", []string{".env"}, "Paths to generate .env files")
+func init() {
+	RootCmd.AddCommand(OnePasswordCommand)
 
-	return cmd
+	OnePasswordCommand.PersistentFlags().StringP("vault", "v", "", "Vault ID")
+	OnePasswordCommand.MarkPersistentFlagRequired("vault")
+	OnePasswordCommand.PersistentFlags().StringArrayP("item", "i", []string{""}, "Item ID")
+	OnePasswordCommand.MarkPersistentFlagRequired("item")
 }

@@ -37,7 +37,7 @@ func GenerateEnvFile(envObject EnvVarObject, filePath string) error {
 	if _, err := os.Stat(filePath); err == nil {
 		existingContent, err := os.ReadFile(filePath)
 		if err != nil {
-			return fmt.Errorf("error reading existing file: %w", err)
+			return fmt.Errorf("error reading existing file: %v", err)
 		}
 
 		scanner := bufio.NewScanner(strings.NewReader(string(existingContent)))
@@ -71,7 +71,7 @@ func GenerateEnvFile(envObject EnvVarObject, filePath string) error {
 
 	err := os.WriteFile(filePath, []byte(envContent.String()), 0644)
 	if err != nil {
-		return fmt.Errorf("error writing to file: %w", err)
+		return fmt.Errorf("error writing to file: %v", err)
 	}
 
 	fmt.Printf("dotenv file generated in %s!\n", filePath)

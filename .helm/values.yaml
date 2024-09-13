@@ -1,0 +1,43 @@
+---
+# General
+projectRoot: 'gbh'
+
+# Domains
+rootDomain: 'gbh.tech'
+domain:
+  backend: "backend.{{ $.Values.werf.env }}.{{ $.Values.rootDomain }}"
+  frontend: "frontend.{{ $.Values.werf.env }}.{{ $.Values.rootDomain }}"
+
+# Backend - Environment Variables
+backendEnvironmentVariables:
+  FRONTEND_URL: "https://{{ tpl $.Values.domain.frontend $ }}"
+
+  # Database
+  DB_USER: 'werf_env_generator_admin'
+  DB_NAME: 'werf_env_generator'
+  DB_HOST: "{{ $.Values.projectRoot }}-{{ $.Values.werf.env }}.cxkhmaqaoco1.test.rds.amazonaws.com"
+  DB_PORT: '5432'
+
+  # Some Var config
+  SOME_VAR_ID: 'sugar-colors-mon=sters-rock-paper'
+  SOME_VAR_HOST: 'https://login.example.com'
+  SOME_VAR_PATH: 'v2.0/.well-known/openid-configuration'
+  SOME_VAR_SCOPES: 'HEY.THERE,COMPLEX.VALUE.HERE'
+
+  EXTRA_VAR: "{{ $.Values.some_extra_var }}"
+  EXTRA_VAR2: "{{ $.Values.some_extra_var2 }}"
+
+
+# Frontend - Environment Variables
+frontendEnvironmentVariables:
+  # Environment settings
+  NODE_ENV: "{{ $.Values.werf.env }}"
+  API_URL: "https://{{ tpl $.Values.domain.backend $ }}"
+
+  # AzureAD connectivity
+  SOME_VAR_CLIENT_ID: 'water-fire-air-earth-wow-hue-cool'
+  SOME_VAR_AUTHORITY: 'https://login.example.com/sugar-colors-monsters-rock-paper'
+  SOME_VAR_REDIRECT_URI: "https://{{ tpl $.Values.domain.frontend $ }}"
+  SOME_VAR_REDIRECT_URI_POST_LOGOUT: "https://{{ tpl $.Values.domain.frontend $ }}"
+  SOME_VAR_CACHE_LOCATION: 'localStorage'
+  SOME_VAR_SCOPES: 'User.Read,User.Write'

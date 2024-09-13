@@ -1,0 +1,16 @@
+{{ $servicesConfig := dict
+  "backend" $.Values.backendEnvironmentVariables
+  "frontend" $.Values.frontendEnvironmentVariables
+}}
+
+{{ range $service, $configs := $servicesConfig }}
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ $.Values.werf.name }}-{{ $service }}
+data:
+  {{- range $key, $val := $configs }}
+    {{ $key }}: "{{ tpl $val $ }}"
+  {{- end }}
+{{ end }}

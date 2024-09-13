@@ -1,1 +1,4 @@
 go 1.23.1
+nodejs 20.10.0
+awscli 2.17.4
+werf 2.0.4

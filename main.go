@@ -1,10 +1,10 @@
-package envi
+package main
 
 import (
 	"fmt"
+	"github.com/gbh-tech/envi/cmd"
 	"os"
 
-	"github.com/gbh-tech/envi/cmd"
 	"github.com/spf13/cobra"
 )
 
@@ -15,8 +15,7 @@ func main() {
 		Version: "1.0.0",
 	}
 
-	rootCmd.AddCommand(cmd.NewWerfCommand())
-	rootCmd.AddCommand(cmd.NewOnePasswordCommand())
+	rootCmd.AddCommand(cmd.OnePasswordCommand())
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

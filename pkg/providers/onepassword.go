@@ -1,14 +1,15 @@
 package providers
 
-type OnePasswordProvider struct {
-	// Add necessary fields
-}
+import (
+	"github.com/1Password/connect-sdk-go/connect"
+)
 
-func NewOnePasswordProvider() *OnePasswordProvider {
-	return &OnePasswordProvider{}
-}
+func NewOnePasswordProvider() connect.Client {
+	client, err := connect.NewClientFromEnvironment()
 
-func (op *OnePasswordProvider) GenerateEnvFile() error {
-	// Implement 1Password-specific logic to generate .env file
-	return nil
+	if err != nil {
+		return nil
+	}
+
+	return client
 }

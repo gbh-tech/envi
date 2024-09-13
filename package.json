@@ -27,6 +27,15 @@
         2,
         "always",
         150
+      ],
+      "subject-case": [
+        2,
+        "always",
+        [
+          "sentence-case",
+          "start-case",
+          "sentence-case"
+        ]
       ]
     }
   },

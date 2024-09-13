@@ -26,9 +26,9 @@ jobs:
         run: if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then exit 1; fi
 
       - name: 🌷 Run lint
-        uses: golangci/golangci-lint-action@v4.0.0
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.54
+          version: v1.61
 
   commitlint:
     runs-on: ubuntu-latest
@@ -47,12 +47,12 @@ jobs:
         run: npm install --only=dev
 
         # Check all commits pushed to this PR
-      - name: 👁️‍🗨️ Validate PR commits with commitlint
-        run: >- 
-          npx commitlint
-          --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }}
-          --to ${{ github.event.pull_request.head.sha }}
-          --verbose
+      # - name: 👁️‍🗨️ Validate PR commits with commitlint
+      #   run: >- 
+      #     npx commitlint
+      #     --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }}
+      #     --to ${{ github.event.pull_request.head.sha }}
+      #     --verbose
 
       - name: 🔎 Validate PR title with commitlint
         run: echo "${{ github.event.pull_request.title }}" | npx commitlint

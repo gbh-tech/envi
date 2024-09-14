@@ -1,55 +1,60 @@
 package cmd
 
 import (
-	"fmt"
-	"github.com/gbh-tech/envi/pkg/providers"
+	"os"
+
+	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
+
+	op "github.com/gbh-tech/envi/pkg/providers/onepassword"
 )
 
-var Vault string
-var Item []string
-var ToPath []string
+var OnePasswordClient op.OnePasswordClient
 
-func OnePasswordCommand() *cobra.Command {
-	var command = &cobra.Command{
-		Use:   "op",
-		Short: "Generate .env file(s) using 1Password as provider",
-		Run: func(cmd *cobra.Command, args []string) {
-			client := providers.NewOnePasswordProvider()
-			items, err := client.GetItems(Vault)
-			if err != nil {
-				return
-			}
-			fmt.Println(items)
-		},
-	}
+var OnePasswordCommand = &cobra.Command{
+	Use:     "op",
+	Aliases: []string{"onepassword"},
+	Short:   "Generate .env file from 1Password",
+	Example: "envi op [flags]",
+	Run: func(cmd *cobra.Command, args []string) {
+		options := configureOnepasswordFlags(cmd)
 
-	OnePasswordCommand := configureFlags(command)
-	return OnePasswordCommand
+		token := os.Getenv("OP_SERVICE_ACCOUNT_TOKEN")
+		OnePasswordClient, err := op.NewClient(token)
+		if err != nil {
+			log.Fatalf("Error initializing OnePassowrd client: %v", err)
+		}
+
+		err = OnePasswordClient.GenerateEnvFile(options)
+		if err != nil {
+			log.Fatalf("Error: %v\n", err)
+		}
+	},
 }
 
-func configureFlags(cmd *cobra.Command) *cobra.Command {
-	cmd.Flags().StringVarP(
-		&Vault,
-		"vault",
-		"v",
-		"",
-		"Target vault to fetch secret item",
-	)
-	cmd.Flags().StringSliceVarP(
-		&Item,
-		"item",
-		"i",
-		nil,
-		"Target secret(s) from which to generate the .env file",
-	)
-	cmd.Flags().StringSliceVarP(
-		&ToPath,
-		"to-path",
-		"p",
-		[]string{".env"},
-		"Path(s) to generate the dot env (.env) file to",
-	)
+func configureOnepasswordFlags(cmd *cobra.Command) op.OnepasswordOptions {
+	vault, _ := cmd.Flags().GetString("vault")
+	item, _ := cmd.Flags().GetStringArray("item")
+	path, _ := cmd.Flags().GetStringArray("path")
 
-	return cmd
+	return op.OnepasswordOptions{
+		Vault: vault,
+		Items: item,
+		Path:  path,
+	}
+}
+
+func init() {
+	RootCmd.AddCommand(OnePasswordCommand)
+
+	OnePasswordCommand.PersistentFlags().StringP("vault", "v", "", "Vault ID")
+	OnePasswordCommand.PersistentFlags().StringArrayP("item", "i", []string{""}, "Item ID")
+
+	// Required flags
+	if err := OnePasswordCommand.MarkPersistentFlagRequired("vault"); err != nil {
+		log.Fatalf("Error marking 'vault' flag as required: %v", err)
+	}
+	if err := OnePasswordCommand.MarkPersistentFlagRequired("item"); err != nil {
+		log.Fatalf("Error marking 'vault' flag as required: %v", err)
+	}
 }

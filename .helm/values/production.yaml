@@ -1,0 +1,4 @@
+# Domain
+domain:
+  backend: "blackbox-api.{{ $.Values.rootDomain }}"
+  frontend: "blackbox.{{ $.Values.rootDomain }}"

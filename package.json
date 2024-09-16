@@ -1,6 +1,6 @@
 {
   "name": "envi",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "dot env file generator based on multiple providers",
   "private": true,
   "scripts": {
@@ -52,8 +52,14 @@
       "tagExclude": "*[-]*",
       "push": true,
       "release": true,
-      "pushArgs": ["--no-verify", "--follow-tags", "--force"],
-      "commitArgs": ["--no-verify"]
+      "pushArgs": [
+        "--no-verify",
+        "--follow-tags",
+        "--force"
+      ],
+      "commitArgs": [
+        "--no-verify"
+      ]
     },
     "plugins": {
       "@release-it/conventional-changelog": {

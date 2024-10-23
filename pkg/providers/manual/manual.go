@@ -15,8 +15,8 @@ type ManualOptions struct {
 func GenerateEnvFile(options ManualOptions) error {
 	envData := make(parser.EnvVarObject)
 	for _, value := range options.Value {
-		kp := strings.SplitN(value, "=", 2)
-		envData[kp[0]] = kp[1]
+		keyPair := strings.SplitN(value, "=", 2)
+		envData[keyPair[0]] = keyPair[1]
 	}
 
 	for _, path := range options.Path {

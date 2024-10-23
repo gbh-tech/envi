@@ -1,5 +1,17 @@
 
 
+## [1.2.0](https://github.com/gbh-tech/envi/compare/v1.1.0...v1.2.0) (2024-10-23)
+
+
+### Features
+
+* (DSO-2128) Add envi command to create environments manually ([#2](https://github.com/gbh-tech/envi/issues/2)) ([4d318f2](https://github.com/gbh-tech/envi/commit/4d318f274c23e53424dad99dd08d685d24dd9b65))
+
+
+### Miscellaneous
+
+* (DSO-00) Fix s3 sync command on ci ([#3](https://github.com/gbh-tech/envi/issues/3)) ([c21dc4a](https://github.com/gbh-tech/envi/commit/c21dc4a18ed86cf3f3fe9c2cd2fd003198df23a8))
+
 ## 1.1.0 (2024-09-16)
 
 

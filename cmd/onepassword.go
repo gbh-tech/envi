@@ -55,6 +55,6 @@ func init() {
 		log.Fatalf("Error marking 'vault' flag as required: %v", err)
 	}
 	if err := OnePasswordCommand.MarkPersistentFlagRequired("item"); err != nil {
-		log.Fatalf("Error marking 'vault' flag as required: %v", err)
+		log.Fatalf("Error marking 'item' flag as required: %v", err)
 	}
 }

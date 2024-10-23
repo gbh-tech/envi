@@ -35,10 +35,18 @@ func configureManual(cmd *cobra.Command) manual.ManualOptions {
 func init() {
 	RootCmd.AddCommand(ManualCommand)
 
-	ManualCommand.PersistentFlags().StringArrayP("value", "v", []string{}, "Manual values to add")
+	ManualCommand.PersistentFlags().StringArrayP(
+		"value",
+		"v",
+		[]string{},
+		"Manual values to add",
+	)
 
 	// Required flags
 	if err := ManualCommand.MarkPersistentFlagRequired("value"); err != nil {
-		log.Fatalf("Error marking 'value' flag as required: %v", err)
+		log.Fatalf(
+			"Error marking 'value' flag as required: %v",
+			err,
+		)
 	}
 }

@@ -44,6 +44,6 @@ func init() {
 
 	// Required flags
 	if err := WerfCommand.MarkPersistentFlagRequired("environment"); err != nil {
-		log.Fatalf("Error marking 'vault' flag as required: %v", err)
+		log.Fatalf("Error marking 'environment' flag as required: %v", err)
 	}
 }

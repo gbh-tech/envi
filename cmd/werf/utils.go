@@ -3,23 +3,17 @@ package werf
 import (
 	"bytes"
 	"fmt"
-	"log"
+	"os"
 	"os/exec"
 	"strings"
 
+	"github.com/charmbracelet/log"
 	parser "github.com/gbh-tech/envi/pkg/utils"
 
 	"gopkg.in/yaml.v3"
 )
 
-type WerfOptions struct {
-	Environment string
-	Secrets     bool
-	Values      string
-	Path        []string
-}
-
-func GenerateEnvFile(options WerfOptions) error {
+func GenerateEnvFile(options Options) {
 	environment := strings.TrimSpace(options.Environment)
 	werfCommand := []string{
 		"werf",
@@ -32,15 +26,37 @@ func GenerateEnvFile(options WerfOptions) error {
 	}
 
 	if options.Secrets {
-		werfCommand = append(werfCommand, "--secret-values", fmt.Sprintf(".helm/secrets/%s.yaml", environment))
+		werfCommand = append(
+			werfCommand,
+			"--secret-values",
+			fmt.Sprintf(".helm/secrets/%s.yaml", environment),
+		)
+	}
+
+	if len(options.ValueFiles) > 0 {
+		for _, file := range options.ValueFiles {
+			if _, err := os.Stat(file); err == nil {
+				werfCommand = append(
+					werfCommand,
+					"--values",
+					file,
+				)
+			} else {
+				log.Fatalf("File doesn't exist")
+			}
+		}
 	}
 
 	if options.Values != "" {
 		extraVars := strings.TrimSpace(options.Values)
-		werfCommand = append(werfCommand, "--set", extraVars)
+		werfCommand = append(
+			werfCommand,
+			"--set",
+			extraVars,
+		)
 	}
 
-	log.Println("Werf command: ", strings.Join(werfCommand, " "))
+	log.Infof("Werf command: %s", strings.Join(werfCommand, " "))
 	cmd := exec.Command(werfCommand[0], werfCommand[1:]...)
 
 	var stdout, stderr bytes.Buffer
@@ -51,11 +67,12 @@ func GenerateEnvFile(options WerfOptions) error {
 	if err != nil {
 		log.Printf("Command stdout:\n%s", stdout.String())
 		log.Printf("Command stderr:\n%s", stderr.String())
-		return fmt.Errorf("failed to execute Werf command: %w\nStderr: %s", err, stderr.String())
+		log.Fatalf("Failed to execute Werf command: %s\nStderr: %s", err, stderr.String())
 	}
+
 	renderedManifests := stdout.Bytes()
 
-	log.Println("Obtaining env vars from rendered manifests...")
+	log.Printf("Obtaining env vars from rendered manifests...")
 
 	var manifests []parser.YamlDoc
 	decoder := yaml.NewDecoder(strings.NewReader(string(renderedManifests)))
@@ -65,7 +82,7 @@ func GenerateEnvFile(options WerfOptions) error {
 			if err.Error() == "EOF" {
 				break
 			}
-			return fmt.Errorf("failed to decode YAML: %v", err)
+			log.Fatalf("Failed to decode YAML: %v", err)
 		}
 		manifests = append(manifests, doc)
 	}
@@ -74,9 +91,8 @@ func GenerateEnvFile(options WerfOptions) error {
 
 	for _, path := range options.Path {
 		if err := parser.GenerateEnvFile(envData, path); err != nil {
-			return fmt.Errorf("failed to generate env file at %s: %v", path, err)
+			log.Fatalf("Failed to generate env file at %s: %v", path, err)
 		}
+		log.Infof("File generated in %s using Werf!\n", path)
 	}
-
-	return nil
 }

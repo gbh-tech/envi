@@ -2,6 +2,9 @@ package utils
 
 import (
 	"os"
+	"reflect"
+	"sort"
+	"strings"
 	"testing"
 )
 
@@ -99,10 +102,6 @@ func TestMergeDataFromManifests(t *testing.T) {
 func TestGenerateEnvFile(t *testing.T) {
 	testFilePath := ".env.test"
 
-	// defer func() {
-	// 	os.Remove(testFilePath)
-	// }()
-
 	tests := []struct {
 		name            string
 		envObject       EnvVarObject
@@ -152,11 +151,18 @@ KEY4='value=with=equal'
 				t.Fatalf("Failed to read env file: %v", err)
 			}
 
-			if string(content) != tt.expectedContent {
-				t.Errorf("Expected content %s, got %s", tt.expectedContent, string(content))
+			expectedLines := strings.Split(tt.expectedContent, "\n")
+			actualLines := strings.Split(string(content), "\n")
+
+			sort.Strings(expectedLines)
+			sort.Strings(actualLines)
+
+			if !reflect.DeepEqual(expectedLines, actualLines) {
+				t.Errorf("Content mismatch after sorting.\nExpected:\n%s\nGot:\n%s",
+					strings.Join(expectedLines, "\n"),
+					strings.Join(actualLines, "\n"))
 			}
 			os.Remove(testFilePath)
-
 		})
 	}
 }

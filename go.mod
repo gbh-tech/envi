@@ -2,13 +2,16 @@ module github.com/gbh-tech/envi
 
 go 1.23.1
 
-require github.com/spf13/cobra v1.8.1
+require (
+	github.com/1password/onepassword-sdk-go v0.1.1
+	github.com/charmbracelet/log v0.4.0
+	github.com/spf13/cobra v1.8.1
+	gopkg.in/yaml.v3 v3.0.1
+)
 
 require (
-	github.com/1password/onepassword-sdk-go v0.1.1 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/lipgloss v0.10.0 // indirect
-	github.com/charmbracelet/log v0.4.0 // indirect
 	github.com/extism/go-sdk v1.3.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
@@ -23,5 +26,4 @@ require (
 	github.com/tetratelabs/wazero v1.7.3 // indirect
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
 	golang.org/x/sys v0.13.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

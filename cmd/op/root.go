@@ -59,7 +59,7 @@ func init() {
 			err,
 		)
 	}
-	if err := Command.MarkPersistentFlagRequired("item"); err != nil {
+	if err := Command.MarkFlagRequired("item"); err != nil {
 		log.Fatalf(
 			"Error marking 'item' flag as required: %v",
 			err,

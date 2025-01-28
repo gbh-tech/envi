@@ -74,6 +74,5 @@ func GenerateEnvFile(envObject EnvVarObject, filePath string) error {
 		return fmt.Errorf("error writing to file: %v", err)
 	}
 
-	fmt.Printf("dotenv file generated in %s!\n", filePath)
 	return nil
 }

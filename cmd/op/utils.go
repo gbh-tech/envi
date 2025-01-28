@@ -2,6 +2,7 @@ package op
 
 import (
 	"context"
+
 	"github.com/1password/onepassword-sdk-go"
 	"github.com/charmbracelet/log"
 	"github.com/gbh-tech/envi/pkg/utils"
@@ -58,6 +59,7 @@ func (client *Client) GenerateEnvFile(options Options) {
 			if err := utils.GenerateEnvFile(envData, path); err != nil {
 				log.Fatalf("failed to generate env file at %s: %v", path, err)
 			}
+			log.Infof("dotenv file generated in %s from vault: %s and item: %s using 1Password!\n", path, options.Vault, item)
 		}
 	}
 }

@@ -3,10 +3,10 @@ package werf
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"os/exec"
 	"strings"
 
+	"github.com/charmbracelet/log"
 	parser "github.com/gbh-tech/envi/pkg/utils"
 
 	"gopkg.in/yaml.v3"
@@ -41,7 +41,7 @@ func GenerateEnvFile(options Options) {
 		)
 	}
 
-	log.Println("Werf command: ", strings.Join(werfCommand, " "))
+	log.Infof("Werf command: %s", strings.Join(werfCommand, " "))
 	cmd := exec.Command(werfCommand[0], werfCommand[1:]...)
 
 	var stdout, stderr bytes.Buffer
@@ -52,12 +52,12 @@ func GenerateEnvFile(options Options) {
 	if err != nil {
 		log.Printf("Command stdout:\n%s", stdout.String())
 		log.Printf("Command stderr:\n%s", stderr.String())
-		log.Fatalf("failed to execute Werf command: %w\nStderr: %s", err, stderr.String())
+		log.Fatalf("failed to execute Werf command: %s\nStderr: %s", err, stderr.String())
 	}
 
 	renderedManifests := stdout.Bytes()
 
-	log.Println("Obtaining env vars from rendered manifests...")
+	log.Printf("Obtaining env vars from rendered manifests...")
 
 	var manifests []parser.YamlDoc
 	decoder := yaml.NewDecoder(strings.NewReader(string(renderedManifests)))
@@ -78,5 +78,6 @@ func GenerateEnvFile(options Options) {
 		if err := parser.GenerateEnvFile(envData, path); err != nil {
 			log.Fatalf("failed to generate env file at %s: %v", path, err)
 		}
+		log.Infof("dotenv file generated in %s using Werf!\n", path)
 	}
 }

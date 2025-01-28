@@ -1,5 +1,12 @@
 
 
+## [1.3.0](https://github.com/gbh-tech/envi/compare/v1.2.0...v1.3.0) (2025-01-28)
+
+
+### Features
+
+* (DSO-2234) Update commands structure ([#4](https://github.com/gbh-tech/envi/issues/4)) ([499b1f9](https://github.com/gbh-tech/envi/commit/499b1f92513a18066611945a653860d9ced06f73))
+
 ## [1.2.0](https://github.com/gbh-tech/envi/compare/v1.1.0...v1.2.0) (2024-10-23)
 
 

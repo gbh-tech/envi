@@ -99,10 +99,6 @@ func TestMergeDataFromManifests(t *testing.T) {
 func TestGenerateEnvFile(t *testing.T) {
 	testFilePath := ".env.test"
 
-	// defer func() {
-	// 	os.Remove(testFilePath)
-	// }()
-
 	tests := []struct {
 		name            string
 		envObject       EnvVarObject
@@ -156,7 +152,6 @@ KEY4='value=with=equal'
 				t.Errorf("Expected content %s, got %s", tt.expectedContent, string(content))
 			}
 			os.Remove(testFilePath)
-
 		})
 	}
 }

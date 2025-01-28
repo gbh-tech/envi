@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/charmbracelet/log"
+	"github.com/gbh-tech/envi/cmd/manual"
+	"github.com/gbh-tech/envi/cmd/op"
+	"github.com/gbh-tech/envi/cmd/werf"
 	"github.com/spf13/cobra"
 )
 
@@ -14,12 +15,20 @@ var RootCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.PersistentFlags().StringArrayP("path", "p", []string{".env"}, "Target repository")
+	RootCmd.AddCommand(manual.Command)
+	RootCmd.AddCommand(op.Command)
+	RootCmd.AddCommand(werf.Command)
+
+	RootCmd.PersistentFlags().StringArrayP(
+		"path",
+		"p",
+		[]string{".env"},
+		"Target file path",
+	)
 }
 
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		log.Error(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }

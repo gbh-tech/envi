@@ -30,7 +30,7 @@ func NewClient(token string) *Client {
 	)
 
 	if err != nil {
-		log.Fatalf("failed to create OnePassword client: %v", err)
+		log.Fatalf("Failed to create OnePassword client: %v", err)
 	}
 
 	return &Client{
@@ -40,33 +40,33 @@ func NewClient(token string) *Client {
 }
 
 func (client *Client) GetVaultName(options Options) string {
+	var VaultName string
+
 	vaults, err := client.Client.Vaults.ListAll(context.Background())
 	if err != nil {
-		log.Fatalf("error fetching vaults: %s", err)
+		log.Fatalf("Error fetching vaults: %s", err)
 	}
 
 	for {
 		vault, err := vaults.Next()
 
 		if vault != nil && vault.ID == options.Vault {
-			return vault.Title
+			VaultName = vault.Title
+			break
 		}
 
 		if errors.Is(err, onepassword.ErrorIteratorDone) {
-			break
+			log.Fatalf("Vault with ID '%s' not found", options.Vault)
 		} else if err != nil {
-			log.Fatalf("error iterating through vaults: %s", err)
+			log.Fatalf("Error iterating through vaults: %s", err)
 		}
 	}
 
-	return ""
+	return VaultName
 }
 
 func (client *Client) GenerateEnvFile(options Options) {
 	vaultName := client.GetVaultName(options)
-	if vaultName == "" {
-		log.Fatalf("vault with ID '%s' not found", options.Vault)
-	}
 
 	for _, item := range options.Items {
 		vaultItem, err := client.Client.Items.Get(
@@ -86,9 +86,9 @@ func (client *Client) GenerateEnvFile(options Options) {
 
 		for _, path := range options.Path {
 			if err := utils.GenerateEnvFile(envData, path); err != nil {
-				log.Fatalf("failed to generate env file at %s: %v", path, err)
+				log.Fatalf("Failed to generate env file at %s: %v", path, err)
 			}
-			log.Infof("dotenv file generated in %s from vault: %s and item: %s using 1Password!\n", path, vaultName, vaultItem.Title)
+			log.Infof("File generated in %s from vault: %s and item: %s using 1Password!\n", path, vaultName, vaultItem.Title)
 		}
 	}
 }

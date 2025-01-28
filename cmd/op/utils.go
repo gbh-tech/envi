@@ -2,6 +2,7 @@ package op
 
 import (
 	"context"
+	"errors"
 
 	"github.com/1password/onepassword-sdk-go"
 	"github.com/charmbracelet/log"
@@ -38,7 +39,35 @@ func NewClient(token string) *Client {
 	}
 }
 
+func (client *Client) GetVaultName(options Options) string {
+	vaults, err := client.Client.Vaults.ListAll(context.Background())
+	if err != nil {
+		log.Fatalf("error fetching vaults: %s", err)
+	}
+
+	for {
+		vault, err := vaults.Next()
+
+		if vault != nil && vault.ID == options.Vault {
+			return vault.Title
+		}
+
+		if errors.Is(err, onepassword.ErrorIteratorDone) {
+			break
+		} else if err != nil {
+			log.Fatalf("error iterating through vaults: %s", err)
+		}
+	}
+
+	return ""
+}
+
 func (client *Client) GenerateEnvFile(options Options) {
+	vaultName := client.GetVaultName(options)
+	if vaultName == "" {
+		log.Fatalf("vault with ID '%s' not found", options.Vault)
+	}
+
 	for _, item := range options.Items {
 		vaultItem, err := client.Client.Items.Get(
 			client.Ctx,
@@ -59,7 +88,7 @@ func (client *Client) GenerateEnvFile(options Options) {
 			if err := utils.GenerateEnvFile(envData, path); err != nil {
 				log.Fatalf("failed to generate env file at %s: %v", path, err)
 			}
-			log.Infof("dotenv file generated in %s from vault: %s and item: %s using 1Password!\n", path, options.Vault, item)
+			log.Infof("dotenv file generated in %s from vault: %s and item: %s using 1Password!\n", path, vaultName, vaultItem.Title)
 		}
 	}
 }

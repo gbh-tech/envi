@@ -9,6 +9,7 @@ type Options struct {
 	Environment string
 	Secrets     bool
 	Values      string
+	ValueFiles  []string
 	Path        []string
 }
 
@@ -26,23 +27,29 @@ var Command = &cobra.Command{
 func parseCommandFlags(cmd *cobra.Command) Options {
 	environment, _ := cmd.Flags().GetString("environment")
 	secrets, _ := cmd.Flags().GetBool("secrets")
-	values, _ := cmd.Flags().GetString("values")
+	values, _ := cmd.Flags().GetString("extra-value")
+	valueFiles, _ := cmd.Flags().GetStringArray("extra-values-file")
 	path, _ := cmd.Flags().GetStringArray("path")
 
 	return Options{
 		Environment: environment,
 		Secrets:     secrets,
 		Values:      values,
+		ValueFiles:  valueFiles,
 		Path:        path,
 	}
 }
 
 func init() {
-	Command.Flags().StringP(
-		"values",
-		"v",
+	Command.Flags().String(
+		"extra-value",
 		"",
-		"Add custom values",
+		"Adds extra value to Werf using --set flag",
+	)
+	Command.Flags().StringArray(
+		"extra-values-file",
+		[]string{},
+		"Adds extra YAML value file to Werf using --values flag",
 	)
 	Command.Flags().BoolP(
 		"secrets",

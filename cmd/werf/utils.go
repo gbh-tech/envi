@@ -3,6 +3,7 @@ package werf
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -32,6 +33,20 @@ func GenerateEnvFile(options Options) {
 		)
 	}
 
+	if len(options.ValueFiles) > 0 {
+		for _, file := range options.ValueFiles {
+			if _, err := os.Stat(file); err == nil {
+				werfCommand = append(
+					werfCommand,
+					"--values",
+					file,
+				)
+			} else {
+				log.Fatalf("File doesn't exist")
+			}
+		}
+	}
+
 	if options.Values != "" {
 		extraVars := strings.TrimSpace(options.Values)
 		werfCommand = append(
@@ -52,7 +67,7 @@ func GenerateEnvFile(options Options) {
 	if err != nil {
 		log.Printf("Command stdout:\n%s", stdout.String())
 		log.Printf("Command stderr:\n%s", stderr.String())
-		log.Fatalf("failed to execute Werf command: %s\nStderr: %s", err, stderr.String())
+		log.Fatalf("Failed to execute Werf command: %s\nStderr: %s", err, stderr.String())
 	}
 
 	renderedManifests := stdout.Bytes()
@@ -67,7 +82,7 @@ func GenerateEnvFile(options Options) {
 			if err.Error() == "EOF" {
 				break
 			}
-			log.Fatalf("failed to decode YAML: %v", err)
+			log.Fatalf("Failed to decode YAML: %v", err)
 		}
 		manifests = append(manifests, doc)
 	}
@@ -76,8 +91,8 @@ func GenerateEnvFile(options Options) {
 
 	for _, path := range options.Path {
 		if err := parser.GenerateEnvFile(envData, path); err != nil {
-			log.Fatalf("failed to generate env file at %s: %v", path, err)
+			log.Fatalf("Failed to generate env file at %s: %v", path, err)
 		}
-		log.Infof("dotenv file generated in %s using Werf!\n", path)
+		log.Infof("File generated in %s using Werf!\n", path)
 	}
 }

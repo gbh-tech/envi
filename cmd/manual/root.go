@@ -23,7 +23,7 @@ var Command = &cobra.Command{
 
 func parseCommandFlags(cmd *cobra.Command) Options {
 	path, _ := cmd.Flags().GetStringArray("path")
-	value, _ := cmd.Flags().GetStringArray("value")
+	value, _ := cmd.Flags().GetStringArray("values")
 
 	return Options{
 		Values: value,
@@ -39,7 +39,7 @@ func init() {
 		"Manual-specified values to include",
 	)
 
-	if err := Command.MarkFlagRequired("value"); err != nil {
+	if err := Command.MarkFlagRequired("values"); err != nil {
 		log.Fatalf(
 			"Error marking 'value' flag as required: %v",
 			err,

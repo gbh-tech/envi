@@ -8,10 +8,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var Version string = "dev"
+
 var RootCmd = &cobra.Command{
 	Use:     "envi",
 	Short:   "A CLI tool for generating .env files from various sources",
-	Version: "1.0.0",
+	Version: Version,
 }
 
 func init() {

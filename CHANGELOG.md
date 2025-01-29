@@ -1,5 +1,12 @@
 
 
+## [1.3.2](https://github.com/gbh-tech/envi/compare/v1.3.1...v1.3.2) (2025-01-29)
+
+
+### Miscellaneous
+
+* (DSO-2234) Update version on build time ([#6](https://github.com/gbh-tech/envi/issues/6)) ([ea6c28e](https://github.com/gbh-tech/envi/commit/ea6c28e66c50e2351041eca4c6d8bac0fb32de15))
+
 ## [1.3.1](https://github.com/gbh-tech/envi/compare/v1.3.0...v1.3.1) (2025-01-29)
 
 

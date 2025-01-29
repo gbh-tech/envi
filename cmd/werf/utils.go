@@ -22,7 +22,6 @@ func GenerateEnvFile(options Options) {
 		environment,
 		"--values",
 		fmt.Sprintf(".helm/values/%s.yaml", environment),
-		"--dev",
 	}
 
 	if options.Secrets {
@@ -30,6 +29,13 @@ func GenerateEnvFile(options Options) {
 			werfCommand,
 			"--secret-values",
 			fmt.Sprintf(".helm/secrets/%s.yaml", environment),
+		)
+	}
+
+	if options.Development {
+		werfCommand = append(
+			werfCommand,
+			"--dev",
 		)
 	}
 
@@ -42,7 +48,7 @@ func GenerateEnvFile(options Options) {
 					file,
 				)
 			} else {
-				log.Fatalf("File doesn't exist")
+				log.Fatalf("File %s doesn't exist", file)
 			}
 		}
 	}
@@ -72,7 +78,7 @@ func GenerateEnvFile(options Options) {
 
 	renderedManifests := stdout.Bytes()
 
-	log.Printf("Obtaining env vars from rendered manifests...")
+	log.Infof("Obtaining env vars from rendered manifests...")
 
 	var manifests []parser.YamlDoc
 	decoder := yaml.NewDecoder(strings.NewReader(string(renderedManifests)))

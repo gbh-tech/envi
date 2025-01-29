@@ -6,6 +6,7 @@ import (
 )
 
 type Options struct {
+	Development bool
 	Environment string
 	Secrets     bool
 	Values      string
@@ -25,6 +26,7 @@ var Command = &cobra.Command{
 }
 
 func parseCommandFlags(cmd *cobra.Command) Options {
+	development, _ := cmd.Flags().GetBool("development")
 	environment, _ := cmd.Flags().GetString("environment")
 	secrets, _ := cmd.Flags().GetBool("secrets")
 	values, _ := cmd.Flags().GetString("extra-value")
@@ -32,6 +34,7 @@ func parseCommandFlags(cmd *cobra.Command) Options {
 	path, _ := cmd.Flags().GetStringArray("path")
 
 	return Options{
+		Development: development,
 		Environment: environment,
 		Secrets:     secrets,
 		Values:      values,
@@ -41,6 +44,12 @@ func parseCommandFlags(cmd *cobra.Command) Options {
 }
 
 func init() {
+	Command.Flags().BoolP(
+		"development",
+		"d",
+		false,
+		"Enable development mode for werf render command",
+	)
 	Command.Flags().String(
 		"extra-value",
 		"",

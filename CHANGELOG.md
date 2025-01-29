@@ -1,5 +1,12 @@
 
 
+## [1.3.1](https://github.com/gbh-tech/envi/compare/v1.3.0...v1.3.1) (2025-01-29)
+
+
+### Miscellaneous
+
+* (DSO-2234) Set werf development mode as an optional flag ([#5](https://github.com/gbh-tech/envi/issues/5)) ([4cbfb81](https://github.com/gbh-tech/envi/commit/4cbfb815fc3f4f4b29992cd9c9d6a1d317c955e6))
+
 ## [1.3.0](https://github.com/gbh-tech/envi/compare/v1.2.0...v1.3.0) (2025-01-28)
 
 

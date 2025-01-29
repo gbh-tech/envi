@@ -22,7 +22,6 @@ func GenerateEnvFile(options Options) {
 		environment,
 		"--values",
 		fmt.Sprintf(".helm/values/%s.yaml", environment),
-		"--parallel",
 	}
 
 	if options.Secrets {

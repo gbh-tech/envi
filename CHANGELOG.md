@@ -1,5 +1,12 @@
 
 
+## [1.3.3](https://github.com/gbh-tech/envi/compare/v1.3.2...v1.3.3) (2025-02-14)
+
+
+### Miscellaneous
+
+* (DSO-2234) Remove line breaks from logs ([#7](https://github.com/gbh-tech/envi/issues/7)) ([4f7a8ca](https://github.com/gbh-tech/envi/commit/4f7a8ca4c78c1a6407826027cdfce0352811d4b3))
+
 ## [1.3.2](https://github.com/gbh-tech/envi/compare/v1.3.1...v1.3.2) (2025-01-29)
 
 

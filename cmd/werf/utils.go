@@ -72,7 +72,6 @@ func GenerateEnvFile(options Options) {
 	err := cmd.Run()
 	if err != nil {
 		log.Printf("Command stdout:\n%s", stdout.String())
-		log.Printf("Command stderr:\n%s", stderr.String())
 		log.Fatalf("Failed to execute Werf command: %s\nStderr: %s", err, stderr.String())
 	}
 
@@ -99,6 +98,6 @@ func GenerateEnvFile(options Options) {
 		if err := parser.GenerateEnvFile(envData, path); err != nil {
 			log.Fatalf("Failed to generate env file at %s: %v", path, err)
 		}
-		log.Infof("File generated in %s using Werf!\n", path)
+		log.Infof("File generated in %s using Werf!", path)
 	}
 }

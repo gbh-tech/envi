@@ -88,7 +88,7 @@ func (client *Client) GenerateEnvFile(options Options) {
 			if err := utils.GenerateEnvFile(envData, path); err != nil {
 				log.Fatalf("Failed to generate env file at %s: %v", path, err)
 			}
-			log.Infof("File generated in %s from vault: %s and item: %s using 1Password!\n", path, vaultName, vaultItem.Title)
+			log.Infof("File generated in %s from vault: %s and item: %s using 1Password!", path, vaultName, vaultItem.Title)
 		}
 	}
 }

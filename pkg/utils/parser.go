@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -61,8 +62,15 @@ func GenerateEnvFile(envObject EnvVarObject, filePath string) error {
 		}
 	}
 
+	var keys []string
+	for k := range envObject {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
 	var envContent strings.Builder
-	for key, value := range envObject {
+	for _, key := range keys {
+		value := envObject[key]
 		_, err := fmt.Fprintf(&envContent, "%s='%s'\n", key, value)
 		if err != nil {
 			return fmt.Errorf("error writing to string builder: %w", err)

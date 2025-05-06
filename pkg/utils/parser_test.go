@@ -2,9 +2,6 @@ package utils
 
 import (
 	"os"
-	"reflect"
-	"sort"
-	"strings"
 	"testing"
 )
 
@@ -151,17 +148,10 @@ KEY4='value=with=equal'
 				t.Fatalf("Failed to read env file: %v", err)
 			}
 
-			expectedLines := strings.Split(tt.expectedContent, "\n")
-			actualLines := strings.Split(string(content), "\n")
-
-			sort.Strings(expectedLines)
-			sort.Strings(actualLines)
-
-			if !reflect.DeepEqual(expectedLines, actualLines) {
-				t.Errorf("Content mismatch after sorting.\nExpected:\n%s\nGot:\n%s",
-					strings.Join(expectedLines, "\n"),
-					strings.Join(actualLines, "\n"))
+			if string(content) != tt.expectedContent {
+				t.Errorf("Expected content %s, got %s", tt.expectedContent, string(content))
 			}
+
 			os.Remove(testFilePath)
 		})
 	}

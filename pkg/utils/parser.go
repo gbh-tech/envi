@@ -66,7 +66,7 @@ func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool) {
 			}
 		}
 		if hasDifferences && !overwrite {
-			log.Fatalf("File already exists and --overwrite flag is not set")
+			log.Fatalf("Environment file differs from manifest; use the --overwrite flag to replace it after saving any required values")
 		}
 
 		if err := scanner.Err(); err != nil {

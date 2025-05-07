@@ -36,14 +36,16 @@ func MergeDataFromManifests(manifests []YamlDoc) EnvVarObject {
 }
 
 // GenerateEnvFile generates an environment file from the given EnvVarObject
-func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool) error {
+func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool) {
 	if _, err := os.Stat(filePath); err == nil {
 		existingContent, err := os.ReadFile(filePath)
 		if err != nil {
-			return fmt.Errorf("error reading existing file: %v", err)
+			log.Fatalf("error reading existing file: %v", err)
 		}
 
 		var hasDifferences bool
+
+		// Read existing file
 		scanner := bufio.NewScanner(strings.NewReader(string(existingContent)))
 		for scanner.Scan() {
 			line := scanner.Text()
@@ -57,18 +59,18 @@ func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool) er
 					if _, exists := envObject[key]; !exists {
 						envObject[key] = trimmedValue
 					} else if trimmedValue != envObject[key] {
-						log.Warnf("Warning: %s has different values (existing: %q, new: %q)", key, trimmedValue, envObject[key])
+						log.Warnf("%s has different values (existing: %q, new: %q)", key, trimmedValue, envObject[key])
 						hasDifferences = true
 					}
 				}
 			}
 		}
 		if hasDifferences && !overwrite {
-			return fmt.Errorf("file already exists and --overwrite flag is not set")
+			log.Fatalf("File already exists and --overwrite flag is not set")
 		}
 
 		if err := scanner.Err(); err != nil {
-			return fmt.Errorf("error scanning existing file: %w", err)
+			log.Fatalf("Error scanning existing file: %v", err)
 		}
 	}
 
@@ -83,14 +85,12 @@ func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool) er
 		value := envObject[key]
 		_, err := fmt.Fprintf(&envContent, "%s='%s'\n", key, value)
 		if err != nil {
-			return fmt.Errorf("error writing to string builder: %w", err)
+			log.Fatalf("error writing to string builder: %v", err)
 		}
 	}
 
 	err := os.WriteFile(filePath, []byte(envContent.String()), 0644)
 	if err != nil {
-		return fmt.Errorf("error writing to file: %v", err)
+		log.Fatalf("error writing to file: %v", err)
 	}
-
-	return nil
 }

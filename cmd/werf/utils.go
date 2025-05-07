@@ -95,9 +95,7 @@ func GenerateEnvFile(options Options) {
 	envData := parser.MergeDataFromManifests(manifests)
 
 	for _, path := range options.Path {
-		if err := parser.GenerateEnvFile(envData, path); err != nil {
-			log.Fatalf("Failed to generate env file at %s: %v", path, err)
-		}
+		parser.GenerateEnvFile(envData, path, options.Overwrite)
 		log.Infof("File generated in %s using Werf!", path)
 	}
 }

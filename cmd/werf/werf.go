@@ -12,6 +12,7 @@ type Options struct {
 	Values      string
 	ValueFiles  []string
 	Path        []string
+	Overwrite   bool
 }
 
 var Command = &cobra.Command{
@@ -32,6 +33,7 @@ func parseCommandFlags(cmd *cobra.Command) Options {
 	values, _ := cmd.Flags().GetString("extra-value")
 	valueFiles, _ := cmd.Flags().GetStringArray("extra-values-file")
 	path, _ := cmd.Flags().GetStringArray("path")
+	overwrite, _ := cmd.Flags().GetBool("overwrite")
 
 	return Options{
 		Development: development,
@@ -40,6 +42,7 @@ func parseCommandFlags(cmd *cobra.Command) Options {
 		Values:      values,
 		ValueFiles:  valueFiles,
 		Path:        path,
+		Overwrite:   overwrite,
 	}
 }
 

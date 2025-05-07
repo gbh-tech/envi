@@ -16,9 +16,7 @@ func generateEnvFileFromManualInput(options Options) {
 	}
 
 	for _, path := range options.Paths {
-		if err := utils.GenerateEnvFile(envData, path); err != nil {
-			log.Fatalf("Failed to generate env file at %s: %v", path, err)
-		}
+		utils.GenerateEnvFile(envData, path, options.Overwrite)
 		log.Infof("File generated in %s, from manual input!", path)
 	}
 }

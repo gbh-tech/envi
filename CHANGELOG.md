@@ -1,5 +1,13 @@
 
 
+## [1.4.0](https://github.com/gbh-tech/envi/compare/v1.3.3...v1.4.0) (2025-05-07)
+
+
+### Features
+
+* (DSO-2270) Generate .env alphabetically ([#8](https://github.com/gbh-tech/envi/issues/8)) ([88913d1](https://github.com/gbh-tech/envi/commit/88913d15fdf18577aa235b75b8cd059aacd140ce))
+* (DSO-2270) Optimize file generation ([#9](https://github.com/gbh-tech/envi/issues/9)) ([31778f8](https://github.com/gbh-tech/envi/commit/31778f88d3439b96c6dc004ab6c093e42062753a))
+
 ## [1.3.3](https://github.com/gbh-tech/envi/compare/v1.3.2...v1.3.3) (2025-02-14)
 
 

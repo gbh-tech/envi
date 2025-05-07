@@ -139,9 +139,7 @@ KEY4='value=with=equal'
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := GenerateEnvFile(tt.envObject, testFilePath); err != nil {
-				t.Fatalf("Failed to generate env file: %v", err)
-			}
+			GenerateEnvFile(tt.envObject, testFilePath, false)
 
 			content, err := os.ReadFile(testFilePath)
 			if err != nil {

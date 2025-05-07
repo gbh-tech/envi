@@ -6,6 +6,8 @@ import (
 	"os"
 	"sort"
 	"strings"
+
+	"github.com/charmbracelet/log"
 )
 
 // YamlDoc represents a YAML document structure
@@ -34,13 +36,16 @@ func MergeDataFromManifests(manifests []YamlDoc) EnvVarObject {
 }
 
 // GenerateEnvFile generates an environment file from the given EnvVarObject
-func GenerateEnvFile(envObject EnvVarObject, filePath string) error {
+func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool) {
 	if _, err := os.Stat(filePath); err == nil {
 		existingContent, err := os.ReadFile(filePath)
 		if err != nil {
-			return fmt.Errorf("error reading existing file: %v", err)
+			log.Fatalf("error reading existing file: %v", err)
 		}
 
+		var hasDifferences bool
+
+		// Read existing file
 		scanner := bufio.NewScanner(strings.NewReader(string(existingContent)))
 		for scanner.Scan() {
 			line := scanner.Text()
@@ -49,16 +54,23 @@ func GenerateEnvFile(envObject EnvVarObject, filePath string) error {
 				if len(parts) == 2 {
 					key := strings.TrimSpace(parts[0])
 					value := strings.TrimSpace(parts[1])
+					// Remove quotes from value
+					trimmedValue := strings.Trim(value, "'\"")
 					if _, exists := envObject[key]; !exists {
-						// Remove quotes from value
-						envObject[key] = strings.Trim(value, "'\"")
+						envObject[key] = trimmedValue
+					} else if trimmedValue != envObject[key] {
+						log.Warnf("%s has different values (existing: %q, new: %q)", key, trimmedValue, envObject[key])
+						hasDifferences = true
 					}
 				}
 			}
 		}
+		if hasDifferences && !overwrite {
+			log.Fatalf("Environment file differs from manifest; use the --overwrite flag to replace it after saving any required values")
+		}
 
 		if err := scanner.Err(); err != nil {
-			return fmt.Errorf("error scanning existing file: %w", err)
+			log.Fatalf("Error scanning existing file: %v", err)
 		}
 	}
 
@@ -73,14 +85,12 @@ func GenerateEnvFile(envObject EnvVarObject, filePath string) error {
 		value := envObject[key]
 		_, err := fmt.Fprintf(&envContent, "%s='%s'\n", key, value)
 		if err != nil {
-			return fmt.Errorf("error writing to string builder: %w", err)
+			log.Fatalf("error writing to string builder: %v", err)
 		}
 	}
 
 	err := os.WriteFile(filePath, []byte(envContent.String()), 0644)
 	if err != nil {
-		return fmt.Errorf("error writing to file: %v", err)
+		log.Fatalf("error writing to file: %v", err)
 	}
-
-	return nil
 }

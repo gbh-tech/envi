@@ -27,6 +27,12 @@ func init() {
 		[]string{".env"},
 		"Target file path",
 	)
+	RootCmd.PersistentFlags().BoolP(
+		"overwrite",
+		"o",
+		false,
+		"Overwrite existing file",
+	)
 }
 
 func Execute() {

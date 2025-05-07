@@ -6,8 +6,9 @@ import (
 )
 
 type Options struct {
-	Values []string
-	Paths  []string
+	Values    []string
+	Paths     []string
+	Overwrite bool
 }
 
 var Command = &cobra.Command{
@@ -24,10 +25,12 @@ var Command = &cobra.Command{
 func parseCommandFlags(cmd *cobra.Command) Options {
 	path, _ := cmd.Flags().GetStringArray("path")
 	value, _ := cmd.Flags().GetStringArray("values")
+	overwrite, _ := cmd.Flags().GetBool("overwrite")
 
 	return Options{
-		Values: value,
-		Paths:  path,
+		Values:    value,
+		Paths:     path,
+		Overwrite: overwrite,
 	}
 }
 

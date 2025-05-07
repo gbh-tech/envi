@@ -7,9 +7,10 @@ import (
 )
 
 type Options struct {
-	Vault string
-	Items []string
-	Path  []string
+	Vault     string
+	Items     []string
+	Path      []string
+	Overwrite bool
 }
 
 var Command = &cobra.Command{
@@ -31,11 +32,13 @@ func parseCommandFlags(cmd *cobra.Command) Options {
 	vault, _ := cmd.Flags().GetString("vault")
 	item, _ := cmd.Flags().GetStringArray("item")
 	path, _ := cmd.Flags().GetStringArray("path")
+	overwrite, _ := cmd.Flags().GetBool("overwrite")
 
 	return Options{
-		Vault: vault,
-		Items: item,
-		Path:  path,
+		Vault:     vault,
+		Items:     item,
+		Path:      path,
+		Overwrite: overwrite,
 	}
 }
 

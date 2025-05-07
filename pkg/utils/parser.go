@@ -6,6 +6,8 @@ import (
 	"os"
 	"sort"
 	"strings"
+
+	"github.com/charmbracelet/log"
 )
 
 // YamlDoc represents a YAML document structure
@@ -34,13 +36,14 @@ func MergeDataFromManifests(manifests []YamlDoc) EnvVarObject {
 }
 
 // GenerateEnvFile generates an environment file from the given EnvVarObject
-func GenerateEnvFile(envObject EnvVarObject, filePath string) error {
+func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool) error {
 	if _, err := os.Stat(filePath); err == nil {
 		existingContent, err := os.ReadFile(filePath)
 		if err != nil {
 			return fmt.Errorf("error reading existing file: %v", err)
 		}
 
+		var hasDifferences bool
 		scanner := bufio.NewScanner(strings.NewReader(string(existingContent)))
 		for scanner.Scan() {
 			line := scanner.Text()
@@ -49,12 +52,19 @@ func GenerateEnvFile(envObject EnvVarObject, filePath string) error {
 				if len(parts) == 2 {
 					key := strings.TrimSpace(parts[0])
 					value := strings.TrimSpace(parts[1])
+					// Remove quotes from value
+					trimmedValue := strings.Trim(value, "'\"")
 					if _, exists := envObject[key]; !exists {
-						// Remove quotes from value
-						envObject[key] = strings.Trim(value, "'\"")
+						envObject[key] = trimmedValue
+					} else if trimmedValue != envObject[key] {
+						log.Warnf("Warning: %s has different values (existing: %q, new: %q)", key, trimmedValue, envObject[key])
+						hasDifferences = true
 					}
 				}
 			}
+		}
+		if hasDifferences && !overwrite {
+			return fmt.Errorf("file already exists and --overwrite flag is not set")
 		}
 
 		if err := scanner.Err(); err != nil {

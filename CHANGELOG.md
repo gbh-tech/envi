@@ -1,5 +1,12 @@
 
 
+## [1.4.1](https://github.com/gbh-tech/envi/compare/v1.4.0...v1.4.1) (2025-05-08)
+
+
+### Bug Fixes
+
+* (DSO-2270) Copy envData to avoid mutating the original ([#10](https://github.com/gbh-tech/envi/issues/10)) ([2f37e50](https://github.com/gbh-tech/envi/commit/2f37e5065cd747e63bd108549daeb7a701bf10be))
+
 ## [1.4.0](https://github.com/gbh-tech/envi/compare/v1.3.3...v1.4.0) (2025-05-07)
 
 

@@ -37,60 +37,95 @@ func MergeDataFromManifests(manifests []YamlDoc) EnvVarObject {
 
 // GenerateEnvFile generates an environment file from the given EnvVarObject
 func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool) {
+	var envCopy EnvVarObject
+
 	if _, err := os.Stat(filePath); err == nil {
-		existingContent, err := os.ReadFile(filePath)
-		if err != nil {
-			log.Fatalf("error reading existing file: %v", err)
-		}
+		// Defensive copy to avoid mutating the original map
+		envCopy = copyEnvObject(envObject)
+		// Parse the existing .env file line by line
+		hasDifferences := parseAndMergeExistingEnv(filePath, envCopy)
 
-		var hasDifferences bool
-
-		// Read existing file
-		scanner := bufio.NewScanner(strings.NewReader(string(existingContent)))
-		for scanner.Scan() {
-			line := scanner.Text()
-			if len(line) != 0 && !strings.HasPrefix(line, "#") {
-				parts := strings.SplitN(line, "=", 2)
-				if len(parts) == 2 {
-					key := strings.TrimSpace(parts[0])
-					value := strings.TrimSpace(parts[1])
-					// Remove quotes from value
-					trimmedValue := strings.Trim(value, "'\"")
-					if _, exists := envObject[key]; !exists {
-						envObject[key] = trimmedValue
-					} else if trimmedValue != envObject[key] {
-						log.Warnf("%s has different values (existing: %q, new: %q)", key, trimmedValue, envObject[key])
-						hasDifferences = true
-					}
-				}
-			}
-		}
 		if hasDifferences && !overwrite {
 			log.Fatalf("Environment file differs from manifest; use the --overwrite flag to replace it after saving any required values")
 		}
+	} else {
+		// No existing file: just use original
+		envCopy = envObject
+	}
 
-		if err := scanner.Err(); err != nil {
-			log.Fatalf("Error scanning existing file: %v", err)
+	writeEnvFile(filePath, envCopy)
+}
+
+func copyEnvObject(src EnvVarObject) EnvVarObject {
+	dst := make(EnvVarObject, len(src))
+	for k, v := range src {
+		dst[k] = v
+	}
+	return dst
+}
+
+func parseAndMergeExistingEnv(filePath string, env EnvVarObject) bool {
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("Error reading existing file: %v", err)
+	}
+
+	scanner := bufio.NewScanner(strings.NewReader(string(content)))
+	hasDifferences := false
+
+	// Parse the existing .env file line by line
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		// Skip empty lines and comments
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		// Split on first '=' only to handle values that may contain '='
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) != 2 {
+			continue
+		}
+
+		key := strings.TrimSpace(parts[0])
+		// Strip surrounding single or double quotes from the value
+		value := strings.TrimSpace(strings.Trim(parts[1], `"'`))
+
+		// Handle two cases:
+		// 1. Key doesn't exist in new manifest - preserve existing value
+		// 2. Key exists but values differ - warn user and set conflict flag
+		if existing, exists := env[key]; !exists {
+			env[key] = value
+		} else if existing != value {
+			log.Warnf("%s has different values (existing: %q, new: %q)", key, value, existing)
+			hasDifferences = true
 		}
 	}
 
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("Error scanning existing file: %v", err)
+	}
+
+	return hasDifferences
+}
+
+func writeEnvFile(filePath string, env EnvVarObject) {
 	var keys []string
-	for k := range envObject {
+	for k := range env {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 
-	var envContent strings.Builder
+	var builder strings.Builder
 	for _, key := range keys {
-		value := envObject[key]
-		_, err := fmt.Fprintf(&envContent, "%s='%s'\n", key, value)
+		_, err := fmt.Fprintf(&builder, "%s='%s'\n", key, env[key])
 		if err != nil {
-			log.Fatalf("error writing to string builder: %v", err)
+			log.Fatalf("Error writing to buffer: %v", err)
 		}
 	}
 
-	err := os.WriteFile(filePath, []byte(envContent.String()), 0644)
-	if err != nil {
-		log.Fatalf("error writing to file: %v", err)
+	if err := os.WriteFile(filePath, []byte(builder.String()), 0644); err != nil {
+		log.Fatalf("Error writing to file: %v", err)
 	}
 }

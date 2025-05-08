@@ -39,10 +39,9 @@ func MergeDataFromManifests(manifests []YamlDoc) EnvVarObject {
 func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool) {
 	var envCopy EnvVarObject
 
+	// If the file exists, copy envObject to avoid modifying the original and merge with its contents
 	if _, err := os.Stat(filePath); err == nil {
-		// Defensive copy to avoid mutating the original map
 		envCopy = copyEnvObject(envObject)
-		// Parse the existing .env file line by line
 		hasDifferences := parseAndMergeExistingEnv(filePath, envCopy)
 
 		if hasDifferences && !overwrite {
@@ -56,6 +55,8 @@ func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool) {
 	writeEnvFile(filePath, envCopy)
 }
 
+// copyEnvObject creates a shallow copy of the original environment map.
+// This prevents mutations to the original input when merging in existing file data.
 func copyEnvObject(src EnvVarObject) EnvVarObject {
 	dst := make(EnvVarObject, len(src))
 	for k, v := range src {
@@ -64,6 +65,9 @@ func copyEnvObject(src EnvVarObject) EnvVarObject {
 	return dst
 }
 
+// parseAndMergeExistingEnv reads an existing .env file and merges values into the provided map.
+// - Preserves values not present in the new manifest.
+// - Warns on mismatched keys to allow manual resolution or require --overwrite.
 func parseAndMergeExistingEnv(filePath string, env EnvVarObject) bool {
 	content, err := os.ReadFile(filePath)
 	if err != nil {
@@ -73,31 +77,26 @@ func parseAndMergeExistingEnv(filePath string, env EnvVarObject) bool {
 	scanner := bufio.NewScanner(strings.NewReader(string(content)))
 	hasDifferences := false
 
-	// Parse the existing .env file line by line
 	for scanner.Scan() {
 		line := scanner.Text()
-
-		// Skip empty lines and comments
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 
-		// Split on first '=' only to handle values that may contain '='
 		parts := strings.SplitN(line, "=", 2)
 		if len(parts) != 2 {
 			continue
 		}
 
 		key := strings.TrimSpace(parts[0])
-		// Strip surrounding single or double quotes from the value
+		// Strip quotes and trim spaces from value to normalize formatting
 		value := strings.TrimSpace(strings.Trim(parts[1], `"'`))
 
-		// Handle two cases:
-		// 1. Key doesn't exist in new manifest - preserve existing value
-		// 2. Key exists but values differ - warn user and set conflict flag
 		if existing, exists := env[key]; !exists {
+			// Preserve value from existing file if it's not defined in the manifest
 			env[key] = value
 		} else if existing != value {
+			// Detect conflict in values to warn user
 			log.Warnf("%s has different values (existing: %q, new: %q)", key, value, existing)
 			hasDifferences = true
 		}
@@ -110,6 +109,8 @@ func parseAndMergeExistingEnv(filePath string, env EnvVarObject) bool {
 	return hasDifferences
 }
 
+// writeEnvFile writes the given environment map to a file in sorted key order.
+// This ensures deterministic output and avoids unnecessary diffs in version control.
 func writeEnvFile(filePath string, env EnvVarObject) {
 	var keys []string
 	for k := range env {
@@ -119,6 +120,7 @@ func writeEnvFile(filePath string, env EnvVarObject) {
 
 	var builder strings.Builder
 	for _, key := range keys {
+		// Always quote values to avoid ambiguity and preserve consistency
 		_, err := fmt.Fprintf(&builder, "%s='%s'\n", key, env[key])
 		if err != nil {
 			log.Fatalf("Error writing to buffer: %v", err)

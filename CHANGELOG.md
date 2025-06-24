@@ -1,5 +1,12 @@
 
 
+## [1.4.2](https://github.com/gbh-tech/envi/compare/v1.4.1...v1.4.2) (2025-06-24)
+
+
+### Bug Fixes
+
+* (DSO-2286) Return error if no argument it's provided to root com… ([#11](https://github.com/gbh-tech/envi/issues/11)) ([a0f9a99](https://github.com/gbh-tech/envi/commit/a0f9a99909058e784e4c2c197ab92563c2082cff))
+
 ## [1.4.1](https://github.com/gbh-tech/envi/compare/v1.4.0...v1.4.1) (2025-05-08)
 
 

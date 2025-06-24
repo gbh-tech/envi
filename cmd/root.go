@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/charmbracelet/log"
 	"github.com/gbh-tech/envi/cmd/manual"
 	"github.com/gbh-tech/envi/cmd/op"
@@ -14,6 +16,10 @@ var RootCmd = &cobra.Command{
 	Use:     "envi",
 	Short:   "A CLI tool for generating .env files from various sources",
 	Version: Version,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// If no subcommand is provided, show usage and return error
+		return fmt.Errorf("requires at least one subcommand")
+	},
 }
 
 func init() {

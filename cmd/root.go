@@ -14,6 +14,11 @@ var RootCmd = &cobra.Command{
 	Use:     "envi",
 	Short:   "A CLI tool for generating .env files from various sources",
 	Version: Version,
+	Run: func(cmd *cobra.Command, args []string) {
+		// If no subcommand is provided, show usage and return error
+		_ = cmd.Help()
+		log.Fatalf("requires at least one subcommand")
+	},
 }
 
 func init() {

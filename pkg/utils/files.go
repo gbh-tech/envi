@@ -18,6 +18,6 @@ func FileExists(path string) bool {
 		return false
 	}
 
-	log.Warnf("File %s does not exist", path)
+	log.Warnf("Failed to check if file %s exists: %v", path, err)
 	return false
 }

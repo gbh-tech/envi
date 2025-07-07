@@ -12,6 +12,7 @@ type Options struct {
 	Values      string
 	ValueFiles  []string
 	Path        []string
+	WerfDir     string
 	Overwrite   bool
 }
 
@@ -33,6 +34,7 @@ func parseCommandFlags(cmd *cobra.Command) Options {
 	values, _ := cmd.Flags().GetString("extra-value")
 	valueFiles, _ := cmd.Flags().GetStringArray("extra-values-file")
 	path, _ := cmd.Flags().GetStringArray("path")
+	werfDir, _ := cmd.Flags().GetString("werf-dir")
 	overwrite, _ := cmd.Flags().GetBool("overwrite")
 
 	return Options{
@@ -42,6 +44,7 @@ func parseCommandFlags(cmd *cobra.Command) Options {
 		Values:      values,
 		ValueFiles:  valueFiles,
 		Path:        path,
+		WerfDir:     werfDir,
 		Overwrite:   overwrite,
 	}
 }
@@ -52,6 +55,12 @@ func init() {
 		"d",
 		false,
 		"Enable development mode for werf render command",
+	)
+	Command.Flags().StringP(
+		"werf-dir",
+		"c",
+		".",
+		"Directory to search for werf config files",
 	)
 	Command.Flags().String(
 		"extra-value",

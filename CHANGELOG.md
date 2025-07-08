@@ -1,5 +1,12 @@
 
 
+## [1.5.0](https://github.com/gbh-tech/envi/compare/v1.4.2...v1.5.0) (2025-07-08)
+
+
+### Features
+
+* (IAD-227) Add support for monorepos ([#12](https://github.com/gbh-tech/envi/issues/12)) ([a413e8f](https://github.com/gbh-tech/envi/commit/a413e8f882f8a9fab791034de8980d17a717e805))
+
 ## [1.4.2](https://github.com/gbh-tech/envi/compare/v1.4.1...v1.4.2) (2025-06-24)
 
 

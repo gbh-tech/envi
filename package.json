@@ -1,6 +1,6 @@
 {
   "name": "envi",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "dot env file generator based on multiple providers",
   "private": true,
   "scripts": {

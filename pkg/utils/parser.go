@@ -12,8 +12,8 @@ import (
 
 // YamlDoc represents a YAML document structure
 type YamlDoc struct {
-	Data       map[string]string
-	StringData map[string]string
+	Data       map[string]string `yaml:"data,omitempty"`
+	StringData map[string]string `yaml:"stringData,omitempty"`
 }
 
 // EnvVarObject represents a map of environment variables

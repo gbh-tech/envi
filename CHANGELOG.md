@@ -1,5 +1,12 @@
 
 
+## [1.5.1](https://github.com/gbh-tech/envi/compare/v1.5.0...v1.5.1) (2025-07-23)
+
+
+### Miscellaneous
+
+* (IAD-238) Support relative --dir flag for Werf sub-command ([#13](https://github.com/gbh-tech/envi/issues/13)) ([fcbc85c](https://github.com/gbh-tech/envi/commit/fcbc85c3a740fa35df5396ca4adbacc15426e1ca))
+
 ## [1.5.0](https://github.com/gbh-tech/envi/compare/v1.4.2...v1.5.0) (2025-07-08)
 
 

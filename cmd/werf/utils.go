@@ -16,8 +16,8 @@ import (
 func GenerateEnvFile(options Options) {
 	environment := strings.TrimSpace(options.Environment)
 
-	secretFile := fmt.Sprintf("%s/.helm/secrets/%s.yaml", options.WerfDir, environment)
-	valueFile := fmt.Sprintf("%s/.helm/values/%s.yaml", options.WerfDir, environment)
+	secretFile := fmt.Sprintf(".helm/secrets/%s.yaml", environment)
+	valueFile := fmt.Sprintf(".helm/values/%s.yaml", environment)
 
 	werfCommand := []string{
 		"werf",
@@ -26,8 +26,14 @@ func GenerateEnvFile(options Options) {
 		environment,
 		"--values",
 		valueFile,
-		"--dir",
-		options.WerfDir,
+	}
+
+	if options.Dir != "" {
+		werfCommand = append(
+			werfCommand,
+			"--dir",
+			options.Dir,
+		)
 	}
 
 	if options.Secrets && parser.FileExists(secretFile) {

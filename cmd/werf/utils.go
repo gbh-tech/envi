@@ -36,7 +36,7 @@ func GenerateEnvFile(options Options) {
 		)
 	}
 
-	if options.Secrets && parser.FileExists(secretFile) {
+	if options.Secrets {
 		werfCommand = append(
 			werfCommand,
 			"--secret-values",

@@ -12,7 +12,7 @@ type Options struct {
 	Values      string
 	ValueFiles  []string
 	Path        []string
-	Dir     		string
+	Dir         string
 	Overwrite   bool
 }
 

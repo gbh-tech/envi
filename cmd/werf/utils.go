@@ -3,7 +3,6 @@ package werf
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"os/exec"
 	"strings"
 
@@ -53,15 +52,11 @@ func GenerateEnvFile(options Options) {
 
 	if len(options.ValueFiles) > 0 {
 		for _, file := range options.ValueFiles {
-			if _, err := os.Stat(file); err == nil {
-				werfCommand = append(
-					werfCommand,
-					"--values",
-					file,
-				)
-			} else {
-				log.Fatalf("File %s doesn't exist", file)
-			}
+			werfCommand = append(
+				werfCommand,
+				"--values",
+				file,
+			)
 		}
 	}
 

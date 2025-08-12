@@ -1,8 +1,9 @@
 # git ignore
 .idea
 .vscode
-envi
 .werf_secret_key
 .env
 .env*
+dist
+envi
 node_modules

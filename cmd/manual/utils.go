@@ -16,7 +16,7 @@ func generateEnvFileFromManualInput(options Options) {
 	}
 
 	for _, path := range options.Paths {
-		utils.GenerateEnvFile(envData, path, options.Overwrite)
+		utils.GenerateEnvFile(envData, path, options.Overwrite, options.NextJS)
 		log.Infof("File generated in %s, from manual input!", path)
 	}
 }

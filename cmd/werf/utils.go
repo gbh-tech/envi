@@ -102,7 +102,7 @@ func GenerateEnvFile(options Options) {
 	envData := parser.MergeDataFromManifests(manifests)
 
 	for _, path := range options.Path {
-		parser.GenerateEnvFile(envData, path, options.Overwrite)
+		parser.GenerateEnvFile(envData, path, options.Overwrite, options.NextJS)
 		log.Infof("File generated in %s using Werf!", path)
 	}
 }

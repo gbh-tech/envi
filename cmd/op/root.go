@@ -11,6 +11,7 @@ type Options struct {
 	Items     []string
 	Path      []string
 	Overwrite bool
+	NextJS    bool
 }
 
 var Command = &cobra.Command{
@@ -33,12 +34,14 @@ func parseCommandFlags(cmd *cobra.Command) Options {
 	item, _ := cmd.Flags().GetStringArray("item")
 	path, _ := cmd.Flags().GetStringArray("path")
 	overwrite, _ := cmd.Flags().GetBool("overwrite")
+	nextjs, _ := cmd.Flags().GetBool("nextjs")
 
 	return Options{
 		Vault:     vault,
 		Items:     item,
 		Path:      path,
 		Overwrite: overwrite,
+		NextJS:    nextjs,
 	}
 }
 

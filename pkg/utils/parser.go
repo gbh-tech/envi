@@ -35,21 +35,37 @@ func MergeDataFromManifests(manifests []YamlDoc) EnvVarObject {
 	return envData
 }
 
+// FilterNextPublic returns only NEXT_PUBLIC_ prefixed keys.
+func FilterNextPublic(envObject EnvVarObject) EnvVarObject {
+	filtered := make(EnvVarObject)
+	for key, value := range envObject {
+		if strings.HasPrefix(key, "NEXT_PUBLIC_") {
+			filtered[key] = value
+		}
+	}
+	return filtered
+}
+
 // GenerateEnvFile generates an environment file from the given EnvVarObject
-func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool) {
+func GenerateEnvFile(envObject EnvVarObject, filePath string, overwrite bool, nextjs bool) {
 	var envCopy EnvVarObject
+	workingEnv := envObject
+
+	if nextjs {
+		workingEnv = FilterNextPublic(envObject)
+	}
 
 	// If the file exists, copy envObject to avoid modifying the original and merge with its contents
 	if _, err := os.Stat(filePath); err == nil {
-		envCopy = copyEnvObject(envObject)
-		hasDifferences := parseAndMergeExistingEnv(filePath, envCopy)
+		envCopy = copyEnvObject(workingEnv)
+		hasDifferences := parseAndMergeExistingEnv(filePath, envCopy, nextjs)
 
 		if hasDifferences && !overwrite {
 			log.Fatalf("Environment file differs from manifest; use the --overwrite flag to replace it after saving any required values")
 		}
 	} else {
 		// No existing file: just use original
-		envCopy = envObject
+		envCopy = workingEnv
 	}
 
 	writeEnvFile(filePath, envCopy)
@@ -68,7 +84,7 @@ func copyEnvObject(src EnvVarObject) EnvVarObject {
 // parseAndMergeExistingEnv reads an existing .env file and merges values into the provided map.
 // - Preserves values not present in the new manifest.
 // - Warns on mismatched keys to allow manual resolution or require --overwrite.
-func parseAndMergeExistingEnv(filePath string, env EnvVarObject) bool {
+func parseAndMergeExistingEnv(filePath string, env EnvVarObject, nextjs bool) bool {
 	content, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Fatalf("Error reading existing file: %v", err)
@@ -89,6 +105,9 @@ func parseAndMergeExistingEnv(filePath string, env EnvVarObject) bool {
 		}
 
 		key := strings.TrimSpace(parts[0])
+		if nextjs && !strings.HasPrefix(key, "NEXT_PUBLIC_") {
+			continue
+		}
 		// Strip quotes and trim spaces from value to normalize formatting
 		value := strings.TrimSpace(strings.Trim(parts[1], `"'`))
 

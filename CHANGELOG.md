@@ -1,5 +1,12 @@
 
 
+## [1.5.3](https://github.com/gbh-tech/envi/compare/v1.5.2...v1.5.3) (2026-02-08)
+
+
+### Miscellaneous
+
+* (DSO-2346) parse next js values ([#17](https://github.com/gbh-tech/envi/issues/17)) ([c6af8e4](https://github.com/gbh-tech/envi/commit/c6af8e4e5bc0a280d0193da52474ab26d0f7f239))
+
 ## [1.5.2](https://github.com/gbh-tech/envi/compare/v1.5.1...v1.5.2) (2025-08-12)
 
 

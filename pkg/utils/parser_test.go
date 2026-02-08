@@ -139,7 +139,7 @@ KEY4='value=with=equal'
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			GenerateEnvFile(tt.envObject, testFilePath, false)
+			GenerateEnvFile(tt.envObject, testFilePath, false, false)
 
 			content, err := os.ReadFile(testFilePath)
 			if err != nil {
@@ -153,4 +153,30 @@ KEY4='value=with=equal'
 			os.Remove(testFilePath)
 		})
 	}
+}
+
+func TestGenerateEnvFileNextJSFilter(t *testing.T) {
+	testFilePath := ".env.test.nextjs"
+
+	envObject := EnvVarObject{
+		"NEXT_PUBLIC_API_URL": "https://example.com",
+		"NEXT_PUBLIC_FEATURE": "true",
+		"SERVER_ONLY_SECRET":  "secret",
+	}
+
+	GenerateEnvFile(envObject, testFilePath, false, true)
+
+	content, err := os.ReadFile(testFilePath)
+	if err != nil {
+		t.Fatalf("Failed to read env file: %v", err)
+	}
+
+	expectedContent := `NEXT_PUBLIC_API_URL='https://example.com'
+NEXT_PUBLIC_FEATURE='true'
+`
+	if string(content) != expectedContent {
+		t.Errorf("Expected content %s, got %s", expectedContent, string(content))
+	}
+
+	os.Remove(testFilePath)
 }

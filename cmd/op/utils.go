@@ -85,7 +85,7 @@ func (client *Client) GenerateEnvFile(options Options) {
 		}
 
 		for _, path := range options.Path {
-			utils.GenerateEnvFile(envData, path, options.Overwrite)
+			utils.GenerateEnvFile(envData, path, options.Overwrite, options.NextJS)
 			log.Infof("File generated in %s from vault: %s and item: %s using 1Password!", path, vaultName, vaultItem.Title)
 		}
 	}

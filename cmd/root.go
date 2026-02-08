@@ -38,6 +38,11 @@ func init() {
 		false,
 		"Overwrite existing file",
 	)
+	RootCmd.PersistentFlags().Bool(
+		"nextjs",
+		false,
+		"Only include NEXT_PUBLIC_ variables",
+	)
 }
 
 func Execute() {
